@@ -1,12 +1,11 @@
-const { Schema, model } = require('mongoose');
-const Reaction = require('./Reaction');
+const { Schema, Types } = require('mongoose');
 
 // Schema to create Post model
 const reactionSchema = new Schema(
   {
     reactionId: {
-      type: Boolean,
-      default: false,
+      type: Schema.Types.ObjectId,
+      default: () => new Types.ObjectId(),
     },
     reactionBody: {
         type: String,
@@ -22,7 +21,6 @@ const reactionSchema = new Schema(
         type: Date,
         default: Date.now,
       },
-    reactions: [Reaction],
   },
   {
     toJSON: {
@@ -38,6 +36,4 @@ reactionSchema
     return this.reaction.length;
   });
 
-const Reaction = model('reaction', reactionSchema);
-
-module.exports = Reaction;
+module.exports = reactionSchema;

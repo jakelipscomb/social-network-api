@@ -1,3 +1,4 @@
+const { ObjectId } = require('mongoose').Types;
 const { User, Thought } = require('../models');
 
 module.exports = {
@@ -53,8 +54,8 @@ module.exports = {
   async addFriend(req, res) {
     try {
       const user = await User.findOneAndUpdate(
-        { _id: req.params.friendId },
-        { $addToSet: { friend: req.body } },
+        { _id: req.params.userId },
+        { $addToSet: { friend: req.body.userId } },
         { runValidators: true, new: true }
       );
 
@@ -71,7 +72,7 @@ module.exports = {
   async removeFriend(req, res) {
     try {
       const user = await User.findOneAndUpdate(
-        { _id: req.params.friendId },
+        { _id: req.params.userId },
         { $pull: { friend: { friendId: req.params.friendId } } },
         { runValidators: true, new: true }
       );
