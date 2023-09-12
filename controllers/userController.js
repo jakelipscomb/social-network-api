@@ -1,4 +1,4 @@
-const { ObjectId } = require('mongoose').Types;
+// const { ObjectId } = require('mongoose').Types;
 const { User, Thought } = require('../models');
 
 module.exports = {
@@ -15,6 +15,8 @@ module.exports = {
   async getSingleUser(req, res) {
     try {
       const user = await User.findOne({ _id: req.params.userId })
+        .populate('thoughts')
+        .populate('friends')
         .select('-__v');
 
       if (!user) {
@@ -35,6 +37,25 @@ module.exports = {
       res.status(500).json(err);
     }
   },
+
+  async updateUser(req, res) {
+    try {
+      const user = await User.findOneAndUpdate(
+        { _id: req.params.userId },
+        { $set: req.body },
+        { runValidators: true, new: true }
+      );
+
+      if (!user) {
+        return res.status(404).json({ message: 'No user with this id!' });
+      }
+
+      res.json(user);
+    } catch (err) {
+      res.status(500).json(err);
+    }
+  },
+
   // Delete a user and associated apps
   async deleteUser(req, res) {
     try {
@@ -55,7 +76,7 @@ module.exports = {
     try {
       const user = await User.findOneAndUpdate(
         { _id: req.params.userId },
-        { $addToSet: { friend: req.body.userId } },
+        { $addToSet: { friend: req.body.friendId } },
         { runValidators: true, new: true }
       );
 
